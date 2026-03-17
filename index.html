@@ -8,7 +8,7 @@
     <style>
         :root {
             --primary-dark: #04252B;
-            --success-green: #14C46F; /* Color verde de la imagen 181033.png */
+            --success-green: #14C46F;
             --text-main: #0A1112;
             --gray-text: #666;
             --border-light: #EBEBEB;
@@ -25,30 +25,38 @@
 
         .view {
             display: none;
-            padding-bottom: 160px; /* Más espacio para la barra de confirmación ancha */
+            padding-bottom: 160px;
         }
 
         .view.active { display: block; }
 
+        /* "Mis productos" con letra más fina (600 en lugar de 800) */
         header {
             padding: 30px 20px 10px 20px;
             font-size: 28px;
-            font-weight: 800;
+            font-weight: 600; 
         }
 
-        /* --- SUBHEADER CON BOTÓN "TODOS" --- */
         .section-header {
             padding: 0 20px 15px 20px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start; /* Alineado arriba para el subtítulo */
         }
 
         .section-title {
             font-size: 14px;
-            font-weight: 600;
-            color: var(--gray-text);
+            font-weight: 700;
+            color: var(--text-main);
             margin: 0;
+        }
+
+        /* "Retiralos por el mostrador" letra más pequeña */
+        .section-subtitle {
+            font-size: 12px;
+            color: var(--gray-text);
+            margin-top: 2px;
+            font-weight: 500;
         }
 
         .todos-btn {
@@ -59,14 +67,10 @@
             font-family: inherit;
             font-weight: 700;
             font-size: 13px;
-            color: var(--text-main);
             cursor: pointer;
         }
 
-        /* --- LISTA DE PRODUCTOS --- */
-        .item-list {
-            padding: 0 15px;
-        }
+        .item-list { padding: 0 15px; }
 
         .consumicion-item {
             display: flex;
@@ -76,7 +80,6 @@
             border: 1px solid var(--border-light);
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .consumicion-icon {
@@ -92,7 +95,7 @@
         }
 
         .consumicion-info { flex-grow: 1; }
-        .consumicion-info .name { font-weight: 700; font-size: 15px; line-height: 1.2; }
+        .consumicion-info .name { font-weight: 700; font-size: 15px; }
 
         .selector-box {
             width: 20px;
@@ -102,7 +105,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
         }
 
         .consumicion-item.selected {
@@ -119,10 +121,8 @@
             content: '✓';
             color: white;
             font-size: 12px;
-            font-weight: bold;
         }
 
-        /* --- BARRA DE CONFIRMACIÓN ANCHA (ENCIMA DEL NAV) --- */
         .confirm-bar {
             position: fixed;
             bottom: 70px;
@@ -135,42 +135,33 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid var(--border-light);
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
             z-index: 999;
         }
 
-        #withdraw.active ~ .confirm-bar {
-            display: flex;
-        }
+        #withdraw.active ~ .confirm-bar { display: flex; }
 
+        /* Contador con letra un poco más grande */
         .selected-count {
             font-weight: 700;
-            font-size: 15px;
+            font-size: 17px; 
             white-space: nowrap;
             margin-right: 15px;
         }
 
-        /* Botón Confirmar: Ancho y color dinámico */
         .confirm-btn {
-            flex-grow: 1; /* Ocupa el espacio disponible para ser ancho */
-            background-color: var(--primary-dark); /* Color por defecto (oscuro) */
+            flex-grow: 1;
+            background-color: var(--primary-dark);
             color: white;
             border: none;
             padding: 15px;
-            border-radius: 30px; /* Más redondeado */
+            border-radius: 30px;
             font-weight: 700;
             font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease; /* Transición suave de color */
-            text-align: center;
+            transition: background-color 0.3s;
         }
 
-        /* Estado ACTIVO del botón (Verde) cuando hay selección */
-        .confirm-btn.active {
-            background-color: var(--success-green);
-        }
+        .confirm-btn.active { background-color: var(--success-green); }
 
-        /* --- BARRA DE NAVEGACIÓN --- */
         nav {
             position: fixed;
             bottom: 0;
@@ -186,7 +177,6 @@
 
         .nav-item { border: none; background: none; color: #C4C4C4; padding: 10px; }
         .nav-item.active { color: var(--primary-dark); }
-
         .banner { width: 100%; aspect-ratio: 2/1; background: url('https://assets.skipit.com.ar/60/banner_60_1770935652578') center/cover; }
     </style>
 </head>
@@ -194,57 +184,45 @@
 
     <div id="home" class="view active">
         <div class="banner"></div>
-        <div style="padding: 20px;">
-            <div style="font-weight: 800; font-size: 22px;">Rabieta Palermo</div>
-        </div>
+        <div style="padding: 20px;"><div style="font-weight: 800; font-size: 22px;">Rabieta Palermo</div></div>
     </div>
 
-    <div id="payment" class="view">
-        <header>Carrito</header>
-    </div>
+    <div id="payment" class="view"><header>Carrito</header></div>
 
     <div id="withdraw" class="view">
         <header>Mis productos</header>
         
         <div class="section-header">
-            <h2 class="section-title">Seleccioná tus productos.</h2>
-            <h3 class="section-title">Retiralos por el mostrador. </h3>
+            <div>
+                <h2 class="section-title">Seleccioná tus productos.</h2>
+                <div class="section-subtitle">Retiralos por el mostrador</div>
+            </div>
             <button class="todos-btn" onclick="selectAll()">Todos</button>
         </div>
         
         <div class="item-list">
             <div class="consumicion-item" onclick="toggleSelect(this)">
                 <div class="consumicion-icon">🍺</div>
-                <div class="consumicion-info">
-                    <div class="name">Bebida sin alcohol ingreso</div>
-                </div>
+                <div class="consumicion-info"><div class="name">Bebida sin alcohol ingreso</div></div>
                 <div class="selector-box"></div>
             </div>
-
             <div class="consumicion-item" onclick="toggleSelect(this)">
                 <div class="consumicion-icon">🍺</div>
-                <div class="consumicion-info">
-                    <div class="name">Bebida sin alcohol ingreso</div>
-                </div>
+                <div class="consumicion-info"><div class="name">Bebida sin alcohol ingreso</div></div>
                 <div class="selector-box"></div>
             </div>
-            
             <div class="consumicion-item" onclick="toggleSelect(this)">
                 <div class="consumicion-icon">🍟</div>
-                <div class="consumicion-info">
-                    <div class="name">Papas Fritas</div>
-                </div>
+                <div class="consumicion-info"><div class="name">Papas Fritas</div></div>
                 <div class="selector-box"></div>
             </div>
         </div>
     </div>
 
-    <div id="perfil" class="view">
-        <header>Cuenta</header>
-    </div>
+    <div id="perfil" class="view"><header>Cuenta</header></div>
 
     <div id="confirmBar" class="confirm-bar">
-        <div class="selected-count"><span id="count">0</span> Producto</div>
+        <div class="selected-count"><span id="count">0</span> seleccionados</div>
         <button id="confirmBtn" class="confirm-btn">Confirmar retiro</button>
     </div>
 
@@ -264,58 +242,37 @@
     </nav>
 
     <script>
-        // Navegación entre pestañas
         function switchView(viewId, btn) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-            
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
             const confirmBar = document.getElementById('confirmBar');
-            if (viewId === 'withdraw') {
-                confirmBar.style.display = 'flex';
-                updateBtnState(); // Asegurar estado correcto al entrar
-            } else {
-                confirmBar.style.display = 'none';
-            }
+            if (viewId === 'withdraw') { confirmBar.style.display = 'flex'; updateBtnState(); } 
+            else { confirmBar.style.display = 'none'; }
         }
 
-        // Seleccionar/Deseleccionar un producto individual
         function toggleSelect(element) {
             element.classList.toggle('selected');
             updateBtnState();
         }
 
-        // Lógica del botón "Todos"
         function selectAll() {
             const items = document.querySelectorAll('.consumicion-item');
-            // Si ya están todos seleccionados, deseleccionamos todos. Si no, seleccionamos todos.
             const allSelected = Array.from(items).every(item => item.classList.contains('selected'));
-            
             items.forEach(item => {
-                if (allSelected) {
-                    item.classList.remove('selected');
-                } else {
-                    item.classList.add('selected');
-                }
+                if (allSelected) item.classList.remove('selected');
+                else item.classList.add('selected');
             });
             updateBtnState();
         }
 
-        // Actualizar contador y COLOR del botón Confirmar
         function updateBtnState() {
             const selectedItemsCount = document.querySelectorAll('.consumicion-item.selected').length;
             document.getElementById('count').innerText = selectedItemsCount;
-            
             const confirmBtn = document.getElementById('confirmBtn');
-            
-            // Si hay productos seleccionados, añadir clase 'active' (Verde)
-            if (selectedItemsCount > 0) {
-                confirmBtn.classList.add('active');
-            } else {
-                confirmBtn.classList.remove('active');
-            }
+            if (selectedItemsCount > 0) confirmBtn.classList.add('active');
+            else confirmBtn.classList.remove('active');
         }
     </script>
 </body>
