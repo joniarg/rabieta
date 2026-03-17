@@ -10,8 +10,8 @@
             --primary-dark: #04252B;
             --text-main: #0A1112;
             --gray-text: #666;
-            --border-light: #E0E0E0;
-            --accent-color: #04252B; /* Color para el check */
+            --border-light: #EBEBEB;
+            --accent-color: #04252B;
         }
 
         body {
@@ -25,43 +25,45 @@
 
         .view {
             display: none;
-            padding-bottom: 80px;
+            padding-bottom: 140px; /* Espacio extra para el botón de confirmar + nav */
         }
 
         .view.active { display: block; }
 
         header {
-            padding: 30px 20px 15px 20px;
+            padding: 30px 20px 10px 20px;
             font-size: 28px;
             font-weight: 800;
         }
 
-        /* --- VISTA RETIROS (CONSUMICIONES) --- */
         .section-title {
-            padding: 10px 20px;
+            padding: 0 20px 15px 20px;
             font-size: 14px;
             font-weight: 600;
             color: var(--gray-text);
-            text-transform: uppercase;
         }
 
+        /* --- LISTA DE PRODUCTOS (RECTÁNGULOS INDIVIDUALES) --- */
         .item-list {
-            margin-top: 10px;
+            padding: 0 15px;
         }
 
         .consumicion-item {
             display: flex;
             align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-light);
+            padding: 12px 15px;
+            margin-bottom: 12px; /* Separación entre cuadros */
+            border: 1px solid var(--border-light); /* Rectángulo fino individual */
+            border-radius: 12px;
             cursor: pointer;
+            transition: border-color 0.2s;
         }
 
         .consumicion-icon {
             width: 45px;
             height: 45px;
-            background: #F2F2F2;
-            border-radius: 8px;
+            background: #F8F9F9;
+            border-radius: 10px;
             margin-right: 15px;
             display: flex;
             align-items: center;
@@ -70,19 +72,21 @@
         }
 
         .consumicion-info { flex-grow: 1; }
-        .consumicion-info .name { font-weight: 700; font-size: 16px; }
-        .consumicion-info .desc { font-size: 12px; color: var(--gray-text); }
+        .consumicion-info .name { font-weight: 700; font-size: 15px; line-height: 1.2; }
 
-        /* El recuadro de selección a la derecha */
         .selector-box {
-            width: 22px;
-            height: 22px;
-            border: 2px solid #DDD;
-            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #D1D1D1;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+        }
+
+        .consumicion-item.selected {
+            border-color: var(--primary-dark);
         }
 
         .consumicion-item.selected .selector-box {
@@ -93,8 +97,45 @@
         .consumicion-item.selected .selector-box::after {
             content: '✓';
             color: white;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
+        }
+
+        /* --- BARRA DE CONFIRMACIÓN (ENCIMA DEL NAV) --- */
+        .confirm-bar {
+            position: fixed;
+            bottom: 70px; /* Justo encima del nav */
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 15px 20px;
+            box-sizing: border-box;
+            display: none; /* Se activa con JS */
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-light);
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+            z-index: 999;
+        }
+
+        #withdraw.active ~ .confirm-bar {
+            display: flex;
+        }
+
+        .selected-count {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .confirm-btn {
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
         }
 
         /* --- BARRA DE NAVEGACIÓN --- */
@@ -111,16 +152,9 @@
             z-index: 1000;
         }
 
-        .nav-item {
-            border: none;
-            background: none;
-            padding: 10px;
-            color: #C4C4C4;
-        }
-
+        .nav-item { border: none; background: none; color: #C4C4C4; padding: 10px; }
         .nav-item.active { color: var(--primary-dark); }
 
-        /* Estilos Home */
         .banner { width: 100%; aspect-ratio: 2/1; background: url('https://assets.skipit.com.ar/60/banner_60_1770935652578') center/cover; }
     </style>
 </head>
@@ -130,15 +164,11 @@
         <div class="banner"></div>
         <div style="padding: 20px;">
             <div style="font-weight: 800; font-size: 22px;">Rabieta Palermo</div>
-            <p style="color: var(--gray-text);">Explora el menú y añade tus consumiciones.</p>
         </div>
     </div>
 
     <div id="payment" class="view">
         <header>Carrito</header>
-        <div style="padding: 40px; text-align: center; color: #CCC;">
-            Tu carrito está vacío.
-        </div>
     </div>
 
     <div id="withdraw" class="view">
@@ -155,7 +185,7 @@
             </div>
 
             <div class="consumicion-item" onclick="toggleSelect(this)">
-                <div class="consumicion-icon">🍔</div>
+                <div class="consumicion-icon">🍺</div>
                 <div class="consumicion-info">
                     <div class="name">Bebida sin alcohol ingreso</div>
                 </div>
@@ -174,13 +204,11 @@
 
     <div id="perfil" class="view">
         <header>Cuenta</header>
-        <div style="padding: 20px; display: flex; align-items: center; gap: 15px;">
-            <div style="width: 50px; height: 50px; background: #EEE; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">👤</div>
-            <div>
-                <div style="font-weight: 700; font-size: 18px;">joniker Ormaetxea</div>
-                <div style="font-size: 13px; color: var(--gray-text);">joniorma123@gmail.com</div>
-            </div>
-        </div>
+    </div>
+
+    <div id="confirmBar" class="confirm-bar">
+        <div class="selected-count"><span id="count">0</span> seleccionados</div>
+        <button class="confirm-btn">Confirmar retiro</button>
     </div>
 
     <nav>
@@ -202,13 +230,25 @@
         function switchView(viewId, btn) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
+            
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+            // Mostrar/Ocultar la barra de confirmación según la pestaña
+            const confirmBar = document.getElementById('confirmBar');
+            if (viewId === 'withdraw') {
+                confirmBar.style.display = 'flex';
+            } else {
+                confirmBar.style.display = 'none';
+            }
         }
 
-        // Función para seleccionar/deseleccionar consumiciones
         function toggleSelect(element) {
             element.classList.toggle('selected');
+            
+            // Actualizar el contador
+            const selectedItems = document.querySelectorAll('.consumicion-item.selected').length;
+            document.getElementById('count').innerText = selectedItems;
         }
     </script>
 </body>
