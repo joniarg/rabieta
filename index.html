@@ -8,10 +8,10 @@
     <style>
         :root {
             --primary-dark: #04252B;
+            --success-green: #14C46F; /* Color verde de la imagen 181033.png */
             --text-main: #0A1112;
             --gray-text: #666;
             --border-light: #EBEBEB;
-            --accent-color: #04252B;
         }
 
         body {
@@ -25,7 +25,7 @@
 
         .view {
             display: none;
-            padding-bottom: 140px; /* Espacio extra para el botón de confirmar + nav */
+            padding-bottom: 160px; /* Más espacio para la barra de confirmación ancha */
         }
 
         .view.active { display: block; }
@@ -36,14 +36,34 @@
             font-weight: 800;
         }
 
-        .section-title {
+        /* --- SUBHEADER CON BOTÓN "TODOS" --- */
+        .section-header {
             padding: 0 20px 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
             font-size: 14px;
             font-weight: 600;
             color: var(--gray-text);
+            margin: 0;
         }
 
-        /* --- LISTA DE PRODUCTOS (RECTÁNGULOS INDIVIDUALES) --- */
+        .todos-btn {
+            background: white;
+            border: 1px solid #D1D1D1;
+            border-radius: 20px;
+            padding: 6px 18px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        /* --- LISTA DE PRODUCTOS --- */
         .item-list {
             padding: 0 15px;
         }
@@ -52,11 +72,11 @@
             display: flex;
             align-items: center;
             padding: 12px 15px;
-            margin-bottom: 12px; /* Separación entre cuadros */
-            border: 1px solid var(--border-light); /* Rectángulo fino individual */
+            margin-bottom: 12px;
+            border: 1px solid var(--border-light);
             border-radius: 12px;
             cursor: pointer;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
 
         .consumicion-icon {
@@ -87,6 +107,7 @@
 
         .consumicion-item.selected {
             border-color: var(--primary-dark);
+            background-color: #F6FAF9;
         }
 
         .consumicion-item.selected .selector-box {
@@ -101,20 +122,20 @@
             font-weight: bold;
         }
 
-        /* --- BARRA DE CONFIRMACIÓN (ENCIMA DEL NAV) --- */
+        /* --- BARRA DE CONFIRMACIÓN ANCHA (ENCIMA DEL NAV) --- */
         .confirm-bar {
             position: fixed;
-            bottom: 70px; /* Justo encima del nav */
+            bottom: 70px;
             left: 0;
             width: 100%;
             background: white;
             padding: 15px 20px;
             box-sizing: border-box;
-            display: none; /* Se activa con JS */
+            display: none;
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid var(--border-light);
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
             z-index: 999;
         }
 
@@ -125,17 +146,28 @@
         .selected-count {
             font-weight: 700;
             font-size: 15px;
+            white-space: nowrap;
+            margin-right: 15px;
         }
 
+        /* Botón Confirmar: Ancho y color dinámico */
         .confirm-btn {
-            background-color: var(--primary-dark);
+            flex-grow: 1; /* Ocupa el espacio disponible para ser ancho */
+            background-color: var(--primary-dark); /* Color por defecto (oscuro) */
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
+            padding: 15px;
+            border-radius: 30px; /* Más redondeado */
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s ease; /* Transición suave de color */
+            text-align: center;
+        }
+
+        /* Estado ACTIVO del botón (Verde) cuando hay selección */
+        .confirm-btn.active {
+            background-color: var(--success-green);
         }
 
         /* --- BARRA DE NAVEGACIÓN --- */
@@ -173,7 +205,11 @@
 
     <div id="withdraw" class="view">
         <header>Mis productos</header>
-        <div class="section-title">Seleccioná tus productos.</div>
+        
+        <div class="section-header">
+            <h2 class="section-title">Seleccioná tus productos.</h2>
+            <button class="todos-btn" onclick="selectAll()">Todos</button>
+        </div>
         
         <div class="item-list">
             <div class="consumicion-item" onclick="toggleSelect(this)">
@@ -208,7 +244,7 @@
 
     <div id="confirmBar" class="confirm-bar">
         <div class="selected-count"><span id="count">0</span> seleccionados</div>
-        <button class="confirm-btn">Confirmar retiro</button>
+        <button id="confirmBtn" class="confirm-btn">Confirmar retiro</button>
     </div>
 
     <nav>
@@ -227,6 +263,7 @@
     </nav>
 
     <script>
+        // Navegación entre pestañas
         function switchView(viewId, btn) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -234,21 +271,50 @@
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // Mostrar/Ocultar la barra de confirmación según la pestaña
             const confirmBar = document.getElementById('confirmBar');
             if (viewId === 'withdraw') {
                 confirmBar.style.display = 'flex';
+                updateBtnState(); // Asegurar estado correcto al entrar
             } else {
                 confirmBar.style.display = 'none';
             }
         }
 
+        // Seleccionar/Deseleccionar un producto individual
         function toggleSelect(element) {
             element.classList.toggle('selected');
+            updateBtnState();
+        }
+
+        // Lógica del botón "Todos"
+        function selectAll() {
+            const items = document.querySelectorAll('.consumicion-item');
+            // Si ya están todos seleccionados, deseleccionamos todos. Si no, seleccionamos todos.
+            const allSelected = Array.from(items).every(item => item.classList.contains('selected'));
             
-            // Actualizar el contador
-            const selectedItems = document.querySelectorAll('.consumicion-item.selected').length;
-            document.getElementById('count').innerText = selectedItems;
+            items.forEach(item => {
+                if (allSelected) {
+                    item.classList.remove('selected');
+                } else {
+                    item.classList.add('selected');
+                }
+            });
+            updateBtnState();
+        }
+
+        // Actualizar contador y COLOR del botón Confirmar
+        function updateBtnState() {
+            const selectedItemsCount = document.querySelectorAll('.consumicion-item.selected').length;
+            document.getElementById('count').innerText = selectedItemsCount;
+            
+            const confirmBtn = document.getElementById('confirmBtn');
+            
+            // Si hay productos seleccionados, añadir clase 'active' (Verde)
+            if (selectedItemsCount > 0) {
+                confirmBtn.classList.add('active');
+            } else {
+                confirmBtn.classList.remove('active');
+            }
         }
     </script>
 </body>
