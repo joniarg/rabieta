@@ -9,6 +9,7 @@
         :root {
             --primary-dark: #04252B;
             --success-green: #14C46F;
+            --btn-gray: #EBEBEB; /* Gris para el botón por defecto */
             --text-main: #0A1112;
             --gray-text: #666;
             --border-light: #EBEBEB;
@@ -30,18 +31,18 @@
 
         .view.active { display: block; }
 
-        /* "Mis productos" con letra más fina (600 en lugar de 800) */
+        /* "Mis productos" letra fina */
         header {
             padding: 30px 20px 10px 20px;
             font-size: 28px;
-            font-weight: 600; 
+            font-weight: 400; 
         }
 
         .section-header {
             padding: 0 20px 15px 20px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start; /* Alineado arriba para el subtítulo */
+            align-items: flex-start;
         }
 
         .section-title {
@@ -51,7 +52,6 @@
             margin: 0;
         }
 
-        /* "Retiralos por el mostrador" letra más pequeña */
         .section-subtitle {
             font-size: 12px;
             color: var(--gray-text);
@@ -123,6 +123,7 @@
             font-size: 12px;
         }
 
+        /* --- BARRA DE CONFIRMACIÓN --- */
         .confirm-bar {
             position: fixed;
             bottom: 70px;
@@ -140,27 +141,33 @@
 
         #withdraw.active ~ .confirm-bar { display: flex; }
 
-        /* Contador con letra un poco más grande */
+        /* Contador letra más grande */
         .selected-count {
             font-weight: 700;
-            font-size: 17px; 
+            font-size: 19px; 
             white-space: nowrap;
             margin-right: 15px;
         }
 
+        /* Botón Confirmar: Gris con letra Negra por defecto */
         .confirm-btn {
             flex-grow: 1;
-            background-color: var(--primary-dark);
-            color: white;
+            background-color: var(--btn-gray);
+            color: var(--text-main); /* Letra negra */
             border: none;
             padding: 15px;
             border-radius: 30px;
             font-weight: 700;
             font-size: 16px;
             transition: background-color 0.3s;
+            text-align: center;
         }
 
-        .confirm-btn.active { background-color: var(--success-green); }
+        /* Botón Confirmar ACTIVO: Verde con letra Negra */
+        .confirm-btn.active { 
+            background-color: var(--success-green);
+            color: var(--text-main); /* Mantiene letra negra según pedido */
+        }
 
         nav {
             position: fixed;
