@@ -9,8 +9,8 @@
         :root {
             --primary-dark: #04252B;
             --success-green: #14C46F;
-            --btn-gray: #EBEBEB; /* Gris para el botón por defecto */
-            --text-main: #0A1112;
+            --btn-gray: #EBEBEB;
+            --text-black: rgb(10, 17, 18);
             --gray-text: #666;
             --border-light: #EBEBEB;
         }
@@ -20,59 +20,45 @@
             padding: 0;
             font-family: 'Manrope', sans-serif, Arial;
             background-color: white;
-            color: var(--text-main);
+            color: var(--text-black);
             -webkit-tap-highlight-color: transparent;
         }
 
-        .view {
-            display: none;
-            padding-bottom: 160px;
-        }
-
+        .view { display: none; padding-bottom: 160px; }
         .view.active { display: block; }
 
-        /* "Mis productos" letra fina */
+        /* HEADER ORIGINAL */
         header {
-            padding: 30px 20px 10px 20px;
-            font-size: 28px;
-            font-weight: 400; 
+            padding: 30px 20px 15px 20px;
+            border-bottom: none;
         }
+        header p { margin: 0; }
 
-        .section-header {
+        /* INFO CONTAINER (Seleccioná + Todos) */
+        ._infoContainer {
             padding: 0 20px 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
         }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin: 0;
-        }
-
-        .section-subtitle {
-            font-size: 12px;
-            color: var(--gray-text);
-            margin-top: 2px;
-            font-weight: 500;
-        }
+        ._infoBox { display: flex; flex-direction: column; }
 
         .todos-btn {
             background: white;
             border: 1px solid #D1D1D1;
             border-radius: 20px;
-            padding: 6px 18px;
+            padding: 8px 20px;
             font-family: inherit;
-            font-weight: 700;
-            font-size: 13px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-black);
             cursor: pointer;
         }
 
-        .item-list { padding: 0 15px; }
-
-        .consumicion-item {
+        /* LISTA DE PRODUCTOS ORIGINAL */
+        ul { list-style: none; padding: 0 15px; margin: 0; }
+        
+        .product-item {
             display: flex;
             align-items: center;
             padding: 12px 15px;
@@ -80,24 +66,24 @@
             border: 1px solid var(--border-light);
             border-radius: 12px;
             cursor: pointer;
+            transition: border-color 0.2s;
         }
 
-        .consumicion-icon {
-            width: 45px;
-            height: 45px;
-            background: #F8F9F9;
-            border-radius: 10px;
+        .product-item.selected { border-color: var(--primary-dark); background-color: #F6FAF9; }
+
+        .product-image img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
             margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
         }
 
-        .consumicion-info { flex-grow: 1; }
-        .consumicion-info .name { font-weight: 700; font-size: 15px; }
+        .product-info { flex-grow: 1; }
+        .product-name { font-weight: 800; font-size: 16px; margin: 0; }
 
-        .selector-box {
+        /* CHECKBOX PERSONALIZADO */
+        .radio-custom {
             width: 20px;
             height: 20px;
             border: 2px solid #D1D1D1;
@@ -107,24 +93,16 @@
             justify-content: center;
         }
 
-        .consumicion-item.selected {
-            border-color: var(--primary-dark);
-            background-color: #F6FAF9;
-        }
-
-        .consumicion-item.selected .selector-box {
+        .product-item.selected .radio-custom {
             background-color: var(--primary-dark);
             border-color: var(--primary-dark);
         }
-
-        .consumicion-item.selected .selector-box::after {
-            content: '✓';
-            color: white;
-            font-size: 12px;
+        .product-item.selected .radio-custom::after {
+            content: '✓'; color: white; font-size: 12px;
         }
 
-        /* --- BARRA DE CONFIRMACIÓN --- */
-        .confirm-bar {
+        /* BARRA DE ACCIÓN INFERIOR */
+        .action-bar {
             position: fixed;
             bottom: 70px;
             left: 0;
@@ -138,113 +116,84 @@
             border-top: 1px solid var(--border-light);
             z-index: 999;
         }
+        #withdraw.active ~ .action-bar { display: flex; }
 
-        #withdraw.active ~ .confirm-bar { display: flex; }
+        .count-text { font-size: 18px; font-weight: 700; color: var(--text-black); }
 
-        /* Contador letra más grande */
-        .selected-count {
-            font-weight: 700;
-            font-size: 19px; 
-            white-space: nowrap;
-            margin-right: 15px;
-        }
-
-        /* Botón Confirmar: Gris con letra Negra por defecto */
         .confirm-btn {
             flex-grow: 1;
+            margin-left: 15px;
             background-color: var(--btn-gray);
-            color: var(--text-main); /* Letra negra */
+            color: var(--text-black);
             border: none;
             padding: 15px;
             border-radius: 30px;
-            font-weight: 700;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            font-size: 18px;
             text-align: center;
+            transition: background-color 0.3s;
         }
+        .confirm-btn.active { background-color: var(--success-green); }
 
-        /* Botón Confirmar ACTIVO: Verde con letra Negra */
-        .confirm-btn.active { 
-            background-color: var(--success-green);
-            color: var(--text-main); /* Mantiene letra negra según pedido */
-        }
-
+        /* NAVEGACIÓN */
         nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: 70px;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid var(--border-light);
-            z-index: 1000;
+            position: fixed; bottom: 0; width: 100%; height: 70px;
+            background: white; display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid var(--border-light); z-index: 1000;
         }
-
         .nav-item { border: none; background: none; color: #C4C4C4; padding: 10px; }
         .nav-item.active { color: var(--primary-dark); }
-        .banner { width: 100%; aspect-ratio: 2/1; background: url('https://assets.skipit.com.ar/60/banner_60_1770935652578') center/cover; }
     </style>
 </head>
 <body>
 
     <div id="home" class="view active">
-        <div class="banner"></div>
-        <div style="padding: 20px;"><div style="font-weight: 800; font-size: 22px;">Rabieta Palermo</div></div>
+        <div style="width: 100%; aspect-ratio: 2/1; background: url('https://assets.skipit.com.ar/60/banner_60_1770935652578') center/cover;"></div>
     </div>
 
-    <div id="payment" class="view"><header>Carrito</header></div>
-
     <div id="withdraw" class="view">
-        <header>Mis productos</header>
+        <header>
+            <p style="font-size: 26px; font-weight: 700; color: var(--text-black);">Mis productos</p>
+        </header>
         
-        <div class="section-header">
-            <div>
-                <h2 class="section-title">Seleccioná tus productos.</h2>
-                <div class="section-subtitle">Retiralos por el mostrador</div>
+        <div class="_infoContainer">
+            <div class="_infoBox">
+                <p style="font-size: 14px; font-weight: 600;">Seleccioná tus productos.</p>
+                <p style="font-size: 12px; font-weight: 500; color: var(--gray-text);">Retiralos por el mostrador.</p>
             </div>
             <button class="todos-btn" onclick="selectAll()">Todos</button>
         </div>
         
-        <div class="item-list">
-            <div class="consumicion-item" onclick="toggleSelect(this)">
-                <div class="consumicion-icon">🍺</div>
-                <div class="consumicion-info"><div class="name">Bebida sin alcohol ingreso</div></div>
-                <div class="selector-box"></div>
-            </div>
-            <div class="consumicion-item" onclick="toggleSelect(this)">
-                <div class="consumicion-icon">🍺</div>
-                <div class="consumicion-info"><div class="name">Bebida sin alcohol ingreso</div></div>
-                <div class="selector-box"></div>
-            </div>
-            <div class="consumicion-item" onclick="toggleSelect(this)">
-                <div class="consumicion-icon">🍟</div>
-                <div class="consumicion-info"><div class="name">Papas Fritas</div></div>
-                <div class="selector-box"></div>
-            </div>
-        </div>
+        <ul id="productList">
+            <li class="product-item" onclick="toggleSelect(this)">
+                <div class="product-image"><img src="https://assets.skipit.com.ar/60/cropped_1768234915043.webp"></div>
+                <div class="product-info"><p class="product-name">Bebida sin alcohol ingreso</p></div>
+                <div class="radio-custom"></div>
+            </li>
+            <li class="product-item" onclick="toggleSelect(this)">
+                <div class="product-image"><img src="https://assets.skipit.com.ar/60/cropped_1768234915043.webp"></div>
+                <div class="product-info"><p class="product-name">Bebida sin alcohol ingreso</p></div>
+                <div class="radio-custom"></div>
+            </li>
+        </ul>
     </div>
 
-    <div id="perfil" class="view"><header>Cuenta</header></div>
+    <div id="perfil" class="view"><header><p style="font-size: 26px; font-weight: 700;">Cuenta</p></header></div>
 
-    <div id="confirmBar" class="confirm-bar">
-        <div class="selected-count"><span id="count">0</span> seleccionados</div>
-        <button id="confirmBtn" class="confirm-btn">Confirmar retiro</button>
+    <div class="action-bar" id="actionBar">
+        <p class="count-text"><span id="count">0</span> Producto</p>
+        <button id="confirmBtn" class="confirm-btn">Confirmar Retiro</button>
     </div>
 
     <nav>
         <button class="nav-item active" onclick="switchView('home', this)">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </button>
-        <button class="nav-item" onclick="switchView('payment', this)">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </button>
         <button class="nav-item" onclick="switchView('withdraw', this)">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </button>
         <button class="nav-item" onclick="switchView('perfil', this)">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
     </nav>
 
@@ -254,32 +203,27 @@
             document.getElementById(viewId).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const confirmBar = document.getElementById('confirmBar');
-            if (viewId === 'withdraw') { confirmBar.style.display = 'flex'; updateBtnState(); } 
-            else { confirmBar.style.display = 'none'; }
+            document.getElementById('actionBar').style.display = (viewId === 'withdraw') ? 'flex' : 'none';
         }
 
         function toggleSelect(element) {
             element.classList.toggle('selected');
-            updateBtnState();
+            updateState();
         }
 
         function selectAll() {
-            const items = document.querySelectorAll('.consumicion-item');
-            const allSelected = Array.from(items).every(item => item.classList.contains('selected'));
-            items.forEach(item => {
-                if (allSelected) item.classList.remove('selected');
-                else item.classList.add('selected');
-            });
-            updateBtnState();
+            const items = document.querySelectorAll('.product-item');
+            const allSel = Array.from(items).every(i => i.classList.contains('selected'));
+            items.forEach(i => allSel ? i.classList.remove('selected') : i.classList.add('selected'));
+            updateState();
         }
 
-        function updateBtnState() {
-            const selectedItemsCount = document.querySelectorAll('.consumicion-item.selected').length;
-            document.getElementById('count').innerText = selectedItemsCount;
-            const confirmBtn = document.getElementById('confirmBtn');
-            if (selectedItemsCount > 0) confirmBtn.classList.add('active');
-            else confirmBtn.classList.remove('active');
+        function updateState() {
+            const num = document.querySelectorAll('.product-item.selected').length;
+            document.getElementById('count').innerText = num;
+            const btn = document.getElementById('confirmBtn');
+            if (num > 0) { btn.classList.add('active'); } 
+            else { btn.classList.remove('active'); }
         }
     </script>
 </body>
