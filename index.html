@@ -8,202 +8,179 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --success-green: rgb(59, 213, 139); /* [cite: 76, 77] */
-            --swipe-red: rgb(255, 79, 94);     /* [cite: 96] */
-            --primary-dark: rgb(4, 37, 43);    /* [cite: 18, 19] */
-            --track-green: rgb(203, 250, 221); /* [cite: 99] */
-            --progress-green: rgb(81, 206, 44);/* [cite: 100] */
-            --text-black: rgb(10, 17, 18);     /* [cite: 5, 10] */
-            --btn-gray: rgb(212, 212, 212);    /* [cite: 131] */
+            --success-green: rgb(59, 213, 139); 
+            --primary-dark: rgb(4, 37, 43);    
+            --text-black: rgb(10, 17, 18);     
+            --gray-text: rgb(66, 80, 82);
+            --bg-light: rgb(250, 250, 250);
+            --border-light: rgb(224, 224, 224);
         }
 
         body {
             margin: 0; padding: 0;
             font-family: 'Manrope', sans-serif;
-            background-color: rgb(250, 250, 250);
+            background-color: var(--bg-light);
             color: var(--text-black);
             overflow-x: hidden;
         }
 
-        .view { display: none; min-height: 100vh; }
+        .view { display: none; min-height: 100vh; padding-bottom: 90px; }
         .view.active { display: block; }
 
-        /* --- VISTA SELECCIÓN --- */
-        #withdraw { padding-bottom: 160px; }
+        /* --- ESTILOS HOME (INICIO) --- */
+        .banner-img { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; } /* [cite: 2427] */
+        
+        .sticky-block { background: white; padding: 15px 20px; border-bottom: 1px solid var(--border-light); }
+        .store-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .store-logo { width: 50px; height: 50px; border-radius: 8px; } /* [cite: 2428] */
+        
+        .balance-card {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        } /* [cite: 2432-2433] */
+
+        .categories-scroll {
+            display: flex; gap: 10px; overflow-x: auto; padding: 10px 0;
+            scrollbar-width: none;
+        }
+        .category-tab {
+            background: var(--primary-dark); color: white;
+            padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;
+            white-space: nowrap;
+        } /* [cite: 2434-2435] */
+
+        /* Cuadrícula de Productos */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 15px;
+        }
+        .home-product-card {
+            background: white; border-radius: 20px; padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .home-product-img { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; }
+        .add-btn-circle {
+            position: absolute; bottom: 65px; right: 15px;
+            background: var(--primary-dark); color: white;
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; border: none;
+        } /* [cite: 2438-2439] */
+
+        /* --- ESTILOS MIS PRODUCTOS (Anteriores) --- */
         header { padding: 30px 20px 10px 20px; font-size: 26px; font-weight: 700; }
-        ._infoContainer { padding: 0 20px 15px 20px; display: flex; justify-content: space-between; }
-        .todos-btn { background: white; border: 1px solid rgb(214, 218, 219); border-radius: 20px; padding: 8px 20px; font-weight: 500; cursor: pointer; }
+        .product-item { display: flex; align-items: center; padding: 12px; margin: 0 15px 12px; border: 1px solid var(--border-light); border-radius: 20px; background: white; }
+        .action-bar { position: fixed; bottom: 70px; left: 0; width: 100%; background: white; padding: 15px; display: flex; align-items: center; border-top: 1px solid var(--border-light); z-index: 10; }
+        .confirm-btn { flex-grow: 1; margin-left: 10px; background: rgb(212, 212, 212); border: none; padding: 12px; border-radius: 25px; font-weight: 600; }
+        .confirm-btn.active { background: var(--success-green); color: var(--text-black); }
 
-        ul { list-style: none; padding: 0 15px; margin: 0; }
-        .product-item {
-            display: flex; align-items: center; padding: 1rem; margin-bottom: 11px;
-            border: 1px solid rgb(214, 218, 219); border-radius: 20px; background: white; cursor: pointer;
-        }
-        .product-item.selected { border: 1px solid var(--text-black); }
-        .product-image img { width: 44px; height: 44px; border-radius: 16px; margin-right: 15px; object-fit: cover; }
-        .product-info { flex-grow: 1; }
-        .product-name { font-weight: 800; font-size: 16px; }
-
-        .action-bar {
-            position: fixed; bottom: 70px; left: 0; width: 100%; background: rgb(247, 247, 247);
-            padding: 16px 16px 65px; box-sizing: border-box; display: flex;
-            justify-content: space-between; align-items: center; border-top: 1px solid #EBEBEB; z-index: 10;
-        }
-        .confirm-btn { flex-grow: 1; margin-left: 10px; background-color: var(--btn-gray); color: var(--text-black); border: none; padding: 10px 20px; border-radius: 25px; font-weight: 500; font-size: 18px; transition: 0.3s; }
-        .confirm-btn.active { background-color: var(--success-green); cursor: pointer; }
-
-        /* --- PANTALLA RETIRO --- */
-        #retiroConfirmView, #retiroSuccessView {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;
-            background-color: var(--success-green); z-index: 2000; display: none; overflow-y: auto;
-        }
-
-        .badge-no-swipe {
-            background-color: var(--swipe-red); color: white; padding: 28px 16px;
-            margin: 0 18px; text-align: center; font-weight: 700; font-size: 18px;
-            border-radius: 20px; border: 1px solid rgb(251, 183, 181);
-        }
-
-        .retiro-card {
-            background: white; border-radius: 32px; padding: 18px;
-            margin: 10px 18px; box-shadow: rgba(163, 172, 173, 0.3) 0px 4px 15px;
-        }
-        ._itemRow { display: flex; gap: 1rem; align-items: center; padding: 10px 26px; border-bottom: 1px solid rgb(214, 218, 219); }
-
-        .swipe-track {
-            position: relative; background-color: var(--track-green); height: 70px;
-            border-radius: 50px; margin: 40px 20px; display: flex; align-items: center;
-            justify-content: center; overflow: hidden;
-        }
-        .swipe-progress { position: absolute; left: 0; height: 100%; background: var(--progress-green); width: 0; border-radius: 50px; }
-        .swipe-thumb { position: absolute; left: 3px; width: 63px; height: 63px; background-color: var(--primary-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 10; cursor: grab; }
-
-        /* --- ÉXITO --- */
-        .success-container { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; }
-
-        /* --- NAVEGACIÓN ORIGINAL  --- */
-        nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #EBEBEB; z-index: 1000; }
-        .nav-item { border: none; background: none; color: #C4C4C4; padding: 10px; display: flex; align-items: center; justify-content: center; }
-        .nav-item.active { color: var(--progress-green); }
+        /* --- NAVEGACIÓN --- */
+        nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-light); z-index: 1000; }
+        .nav-item { border: none; background: none; color: #C4C4C4; padding: 10px; }
+        .nav-item.active { color: var(--primary-dark); }
     </style>
 </head>
 <body>
 
-    <div id="withdraw" class="view active">
+    <div id="home" class="view active">
+        <img src="https://assets.skipit.com.ar/60/banner_60_1770935652578" class="banner-img"> <div class="sticky-block">
+            <div class="store-info">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <img src="https://assets.skipit.com.ar/60/logo_60_1742138900273" class="store-logo"> <div>
+                        <p style="margin:0; font-weight: 700; font-size: 18px;">Rabieta Palermo</p>
+                        <p style="margin:0; font-size: 12px; font-weight: 500;">Ingreso - .</p>
+                    </div>
+                </div>
+                <div style="background: var(--primary-dark); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+            </div>
+
+            <div class="balance-card">
+                <span style="font-weight: 700; font-size: 18px;">Mi Saldo</span>
+                <span style="font-weight: 700; font-size: 18px;">$ 0,00</span>
+            </div> <div class="categories-scroll">
+                <div class="category-tab">Ingreso</div>
+                <div class="category-tab" style="background: transparent; color: var(--gray-text);">Bebidas</div>
+            </div> </div>
+
+        <div style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <p style="font-weight: 700; font-size: 18px; margin: 0;">Ingreso</p>
+            <span style="font-size: 12px; color: var(--gray-text); font-weight: 600;">Ver más ></span>
+        </div>
+
+        <div class="product-grid">
+            <div class="home-product-card">
+                <img src="https://assets.skipit.com.ar/60/cropped_1768451279607.webp" class="home-product-img">
+                <button class="add-btn-circle">+</button>
+                <p style="font-weight: 800; font-size: 14px; margin: 8px 0 4px;">After + 2 pintas</p>
+                <p style="font-weight: 500; font-size: 13px; margin: 0;">$ 25.000,00</p>
+            </div>
+            <div class="home-product-card">
+                <img src="https://assets.skipit.com.ar/60/cropped_1768234814339.webp" class="home-product-img">
+                <button class="add-btn-circle">+</button>
+                <p style="font-weight: 800; font-size: 14px; margin: 8px 0 4px;">After + 2 tragos</p>
+                <p style="font-weight: 500; font-size: 13px; margin: 0;">$ 30.000,00</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="withdraw" class="view">
         <header><p>Mis productos</p></header>
-        <div class="_infoContainer">
+        <div style="padding: 0 20px 15px; display: flex; justify-content: space-between;">
             <div>
                 <p style="font-size: 14px; font-weight: 700; margin:0;">Seleccioná tus productos.</p>
-                <p style="font-size: 12px; font-weight: 500; color: #666; margin:0;">Retiralos por el mostrador.</p>
+                <p style="font-size: 12px; font-weight: 500; color: var(--gray-text); margin:0;">Retiralos por el mostrador.</p>
             </div>
-            <button class="todos-btn" onclick="selectAll()">Todos</button>
+            <button style="background:white; border:1px solid #D1D1D1; border-radius:20px; padding:6px 15px; font-weight:600;">Todos</button>
         </div>
-        <ul id="mainProductList">
-            <li class="product-item" onclick="toggleSelect(this)">
-                <div class="product-image"><img src="https://assets.skipit.com.ar/60/cropped_1768234915043.webp"></div>
-                <div class="product-info"><p class="product-name">Bebida sin alcohol ingreso</p></div>
-                <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primary-dark);">
+        <ul id="mainProductList" style="list-style: none; padding: 0;">
+            <li class="product-item">
+                <img src="https://assets.skipit.com.ar/60/cropped_1768234915043.webp" style="width:44px; border-radius:12px; margin-right:12px;">
+                <div style="flex-grow:1;"><p style="font-weight:800; margin:0;">Bebida sin alcohol ingreso</p></div>
+                <input type="checkbox">
             </li>
         </ul>
         <div class="action-bar">
-            <p style="font-size: 18px; font-weight: 700; margin:0;"><span id="count">0</span> Producto</p>
-            <button id="confirmBtn" class="confirm-btn" onclick="openConfirm()">Confirmar Retiro</button>
+            <p style="font-weight: 700;">1 Producto</p>
+            <button class="confirm-btn active">Confirmar Retiro</button>
         </div>
     </div>
 
-    <div id="retiroConfirmView">
-        <header style="display: flex; align-items: center; justify-content: space-between;">
-            <p>Retiro</p>
-            <span onclick="closeConfirm()" style="font-size: 24px; cursor: pointer;">✕</span>
-        </header>
-        <div class="badge-no-swipe">¡NO hagas swipe antes de retirar!</div>
-        <div class="retiro-card">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                <img src="https://assets.skipit.com.ar/60/logo_60_1742138900273" width="50" height="50">
-                <div><p style="font-weight: 700; margin: 0;">Rabieta Palermo</p></div>
-            </div>
-            <p style="font-size: 16px; font-weight: 800; color: rgb(66, 80, 82);">Hora <span id="time">00:00:00</span></p>
-            <div id="dynamicItems"></div>
-        </div>
-        <div class="swipe-track" id="track">
-            <div class="swipe-progress" id="progress"></div>
-            <span style="position: absolute; font-weight: 700; color: var(--text-black);">Retirado</span>
-            <div class="swipe-thumb" id="handle">
-                <svg width="35" height="35" viewBox="0 0 25 25" fill="white">
-                    <path d="M7.83114 19.7627C8.25416 20.2524 8.9744 20.3332 9.49325 19.9697L9.59481 19.8916L17.0401 13.4609C17.3151 13.2235 17.4727 12.8779 17.4727 12.5146C17.4727 12.1515 17.3149 11.8067 17.0401 11.5693L9.59481 5.13867L9.49325 5.05957C8.97439 4.69625 8.25409 4.77784 7.83114 5.26758C7.38019 5.78995 7.43793 6.57906 7.96005 7.03027L14.3106 12.5156L7.96005 17.999L7.86825 18.0879C7.43298 18.5483 7.40809 19.2728 7.83114 19.7627Z" fill="currentColor"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
+    <div id="cart" class="view"><header><p>Carrito</p></header></div>
+    <div id="perfil" class="view"><header><p>Cuenta</p></header></div>
 
-    <div id="retiroSuccessView">
-        <header><p>Retiro</p></header>
-        <div class="success-container">
-            <svg width="108" height="108" viewBox="0 0 108 108" fill="none">
-                <circle cx="54" cy="54" r="54" fill="#F2F2F2"/><path d="M68.6975 35.6647C66.9589 35.9808 65.4311 36.9291 64.4301 38.3515L49.2048 59.6881L42.8301 53.3135C40.354 50.8374 36.034 50.8374 33.5053 53.3135C30.9765 55.7896 30.9238 60.0569 33.5053 62.6384L45.3589 74.492C46.5706 75.7037 48.2565 76.4413 49.995 76.4413C50.1531 76.4413 50.3638 76.4413 50.5218 76.4413C52.4711 76.2832 54.2097 75.2823 55.316 73.7018L75.0721 46.0432C77.1794 43.093 76.4945 38.9837 73.5443 36.8764C72.1218 35.8754 70.3833 35.454 68.6448 35.7174L68.6975 35.6647Z" fill="#3BD58B"/>
-            </svg>
-            <p style="font-size: 18px; font-weight: 700; margin-top: 15px;">¡Retiraste tus productos!</p>
-        </div>
-    </div>
-
-    <nav id="mainNav">
-        <button class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2"><path d="M15 21V16C15 15.7348 14.8946 15.4804 14.7071 15.2929C14.5196 15.1054 14.2652 15 14 15H10C9.73478 15 9.48043 15.1054 9.29289 15.2929C9.10536 15.4804 9 15.7348 9 16V21" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.7749 10.31C17.5665 10.1104 17.289 9.99904 17.0004 9.99904C16.7118 9.99904 16.4344 10.1104 16.2259 10.31C15.7609 10.7535 15.143 11.001 14.5004 11.001C13.8578 11.001 13.2399 10.7535 12.7749 10.31C12.5665 10.1107 12.2893 9.99952 12.0009 9.99952C11.7126 9.99952 11.4353 10.1107 11.2269 10.31C10.7619 10.7538 10.1438 11.0014 9.50093 11.0014C8.8581 11.0014 8.23997 10.7538 7.77493 10.31C7.56647 10.1104 7.28902 9.99904 7.00043 9.99904C6.71184 9.99904 6.43439 10.1104 6.22593 10.31C5.77677 10.7386 5.1842 10.9848 4.56356 11.0005C3.94291 11.0163 3.33859 10.8006 2.86823 10.3954C2.39787 9.99015 2.09513 9.42439 2.01891 8.80824C1.9427 8.19209 2.09848 7.56962 2.45593 7.062L5.34493 2.878C5.52824 2.60751 5.77502 2.38605 6.06371 2.233C6.35239 2.07994 6.67418 1.99994 7.00093 2H17.0009C17.3267 1.99988 17.6476 2.07934 17.9357 2.23149C18.2238 2.38364 18.4703 2.60386 18.6539 2.873L21.5489 7.065C21.9065 7.57303 22.062 8.19597 21.9854 8.81244C21.9087 9.42891 21.6052 9.99475 21.1341 10.3997C20.663 10.8046 20.058 11.0197 19.437 11.0029C18.816 10.9861 18.2235 10.7388 17.7749 10.309" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10.9492V18.9992C4 19.5297 4.21071 20.0384 4.58579 20.4134C4.96086 20.7885 5.46957 20.9992 6 20.9992H18C18.5304 20.9992 19.0391 20.7885 19.4142 20.4134C19.7893 20.0384 20 19.5297 20 18.9992V10.9492" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <nav>
+        <button class="nav-item active" onclick="switchView('home', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </button>
-        <button class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2"><path d="M8 22C8.55228 22 9 21.5523 9 21C9 20.4477 8.55228 20 8 20C7.44772 20 7 20.4477 7 21C7 21.5523 7.44772 22 8 22Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 22C19.5523 22 20 21.5523 20 21C20 20.4477 19.5523 20 19 20C18.4477 20 18 20.4477 18 21C18 21.5523 18.4477 22 19 22Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.05078 2.05078H4.05078L6.71078 14.4708C6.80836 14.9256 7.06145 15.3323 7.42649 15.6206C7.79153 15.909 8.24569 16.0611 8.71078 16.0508H18.4908C18.946 16.05 19.3873 15.8941 19.7418 15.6086C20.0964 15.3232 20.3429 14.9253 20.4408 14.4808L22.0908 7.05078H5.12078" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="nav-item" onclick="switchView('cart', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         </button>
-        <button class="nav-item active">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2"><path d="M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.10156 6.03516H20.8956" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.4 5.467C3.14036 5.81319 3 6.23426 3 6.667V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6.667C21 6.23426 20.8596 5.81319 20.6 5.467L18.6 2.8C18.4137 2.55161 18.1721 2.35 17.8944 2.21115C17.6167 2.07229 17.3105 2 17 2H7C6.68951 2 6.38328 2.07229 6.10557 2.21115C5.82786 2.35 5.58629 2.55161 5.4 2.8L3.4 5.467Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="nav-item" onclick="switchView('withdraw', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </button>
-        <button class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2"><path d="M12 13C14.7614 13 17 10.7614 17 8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8C7 10.7614 9.23858 13 12 13Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 21C20 18.8783 19.1571 16.8434 17.6569 15.3431C16.1566 13.8429 14.1217 13 12 13C9.87827 13 7.84344 13.8429 6.34315 15.3431C4.84285 16.8434 4 18.8783 4 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="nav-item" onclick="switchView('perfil', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
     </nav>
 
     <script>
-        function toggleSelect(el) { el.classList.toggle('selected'); el.querySelector('input').checked = el.classList.contains('selected'); update(); }
-        function selectAll() { const items = document.querySelectorAll('.product-item'); const anyUn = Array.from(items).some(i => !i.classList.contains('selected')); items.forEach(i => { if(anyUn) i.classList.add('selected'); else i.classList.remove('selected'); i.querySelector('input').checked = i.classList.contains('selected'); }); update(); }
-        function update() { const n = document.querySelectorAll('.product-item.selected').length; document.getElementById('count').innerText = n; const btn = document.getElementById('confirmBtn'); if(n > 0) btn.classList.add('active'); else btn.classList.remove('active'); }
-        
-        function openConfirm() {
-            const sel = document.querySelectorAll('.product-item.selected'); if(sel.length === 0) return;
-            const cont = document.getElementById('dynamicItems'); cont.innerHTML = '';
-            sel.forEach(i => { cont.innerHTML += `<div class="_itemRow"><p style="font-weight:700; margin:0;">1</p><p style="font-weight:700; margin:0;">${i.querySelector('.product-name').innerText}</p></div>`; });
-            document.getElementById('time').innerText = new Date().toLocaleTimeString('es-AR');
-            document.getElementById('retiroConfirmView').style.display = 'block';
-            document.getElementById('mainNav').style.display = 'none';
-        }
-
-        function closeConfirm() { document.getElementById('retiroConfirmView').style.display = 'none'; document.getElementById('mainNav').style.display = 'flex'; }
-        
-        // SWIPE LOGIC
-        const h = document.getElementById('handle'), t = document.getElementById('track'), p = document.getElementById('progress');
-        let isD = false, sX = 0;
-        h.addEventListener('touchstart', (e) => { isD = true; sX = e.touches[0].clientX; h.style.transition = 'none'; });
-        document.addEventListener('touchmove', (e) => {
-            if (!isD) return;
-            let diff = e.touches[0].clientX - sX;
-            let max = t.offsetWidth - h.offsetWidth - 6;
-            if (diff > 0 && diff <= max) { h.style.transform = `translateX(${diff}px)`; p.style.width = (diff + 30) + 'px'; }
-            if (diff > max) { isD = false; confirmFinish(); }
-        });
-        document.addEventListener('touchend', () => { if (!isD) return; isD = false; h.style.transition = 'transform 0.3s'; h.style.transform = 'translateX(0px)'; p.style.width = '0'; });
-
-        function confirmFinish() {
-            const selectedItems = document.querySelectorAll('.product-item.selected');
-            selectedItems.forEach(item => item.remove());
-            update();
-            showSuccess();
-        }
-
-        function showSuccess() {
-            document.getElementById('retiroConfirmView').style.display = 'none';
-            document.getElementById('retiroSuccessView').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('retiroSuccessView').style.display = 'none';
-                document.getElementById('mainNav').style.display = 'flex';
-            }, 4000);
+        function switchView(viewId, btn) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            window.scrollTo(0,0);
         }
     </script>
 </body>
