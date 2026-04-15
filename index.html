@@ -1,262 +1,54 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skipit Clone - Experimento</title>
-    <link rel="icon" type="image/png" href="https://pedi.skipit.com.ar/assets/skipit_logo-982ff30d.png">
-    <style>
-        :root {
-            --primary-dark: #04252B; /* El color casi negro/azul de Skipit */
-            --success-green: #14C46F; /* El verde de la marca */
-            --btn-gray: #EBEBEB;
-            --text-black: rgb(10, 17, 18);
-            --gray-text: #666;
-            --border-light: #EBEBEB;
-        }
+<style>
+    /* PANTALLA DE RETIRO CON COLORES REALES EXTRAÍDOS */
+    #retiroConfirmView {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* El verde exacto del archivo: rgb(59, 213, 139) */
+        background-color: rgb(59, 213, 139); 
+        z-index: 2000;
+        display: none;
+        color: rgb(10, 17, 18);
+    }
 
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Manrope', sans-serif, Arial;
-            background-color: white;
-            color: var(--text-black);
-            -webkit-tap-highlight-color: transparent;
-        }
+    /* El aviso de advertencia real (es rojo en tu código) */
+    .badge-no-swipe {
+        background-color: rgb(255, 79, 94); 
+        border: 1px solid rgb(251, 183, 181);
+        color: white;
+        padding: 28px 16px;
+        text-align: center;
+        font-weight: 700;
+        border-radius: 20px;
+        margin: 10px;
+    }
 
-        .view { display: none; padding-bottom: 160px; }
-        .view.active { display: block; }
+    /* El carril del deslizador (verde muy clarito) */
+    .swipe-wrapper {
+        margin: 30px 20px;
+        background-color: rgb(203, 250, 221); 
+        height: 70px;
+        border-radius: 50px;
+        border: 1px solid rgb(247, 247, 247);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
 
-        /* --- ESTILOS VISTA RETIROS --- */
-        header { padding: 30px 20px 10px 20px; font-size: 26px; font-weight: 700; }
-        ._infoContainer { padding: 0 20px 15px 20px; display: flex; justify-content: space-between; }
-        .todos-btn { background: white; border: 1px solid #D1D1D1; border-radius: 20px; padding: 8px 20px; font-weight: 500; cursor: pointer; }
-        
-        ul { list-style: none; padding: 0 15px; margin: 0; }
-        .product-item {
-            display: flex; align-items: center; padding: 12px 15px; margin-bottom: 12px;
-            border: 1px solid var(--border-light); border-radius: 12px; cursor: pointer;
-        }
-        .product-item.selected { border-color: var(--primary-dark); background-color: #F6FAF9; }
-        .product-image img { width: 50px; height: 50px; border-radius: 8px; margin-right: 15px; }
-        .product-info { flex-grow: 1; }
-        .product-name { font-weight: 800; font-size: 16px; margin: 0; }
-
-        .radio-custom { width: 20px; height: 20px; border: 2px solid #D1D1D1; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-        .product-item.selected .radio-custom { background-color: var(--primary-dark); border-color: var(--primary-dark); }
-        .product-item.selected .radio-custom::after { content: '✓'; color: white; font-size: 12px; }
-
-        /* BARRA ACCIÓN */
-        .action-bar {
-            position: fixed; bottom: 70px; left: 0; width: 100%; background: white;
-            padding: 15px 20px; box-sizing: border-box; display: none;
-            justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); z-index: 999;
-        }
-        .confirm-btn { flex-grow: 1; margin-left: 15px; background-color: var(--btn-gray); color: var(--text-black); border: none; padding: 15px; border-radius: 30px; font-weight: 600; font-size: 18px; text-align: center; transition: 0.3s; }
-        .confirm-btn.active { background-color: var(--success-green); }
-
-        /* --- PANTALLA DE RETIRO (FONDO VERDE) --- */
-        #retiroConfirmView {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--success-green); /* FONDO VERDE AHORA */
-            z-index: 2000; display: none; overflow-y: auto;
-        }
-
-        #retiroConfirmView header { background: transparent; padding: 25px 20px; }
-
-        .badge-no-swipe {
-            background-color: var(--primary-dark); /* Color oscuro para contraste */
-            color: #F2F2F2; padding: 12px; text-align: center;
-            font-weight: 700; font-size: 17px; letter-spacing: -0.02rem;
-        }
-
-        .retiro-container { padding: 20px; }
-        .store-header { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
-        .store-header img { width: 50px; height: 50px; border-radius: 8px; background: white; padding: 2px; }
-        
-        /* Separador oscuro para que se vea sobre el verde */
-        .separator { height: 1px; background-color: rgba(0,0,0,0.1); margin: 15px 0; }
-
-        /* SWIPE SLIDER MEJORADO */
-        .swipe-wrapper {
-            margin: 30px 20px; position: relative;
-            background: rgba(0,0,0,0.08); height: 64px; border-radius: 32px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .swipe-text { position: absolute; font-weight: 700; color: var(--primary-dark); font-size: 18px; }
-        .swipe-handle {
-            position: absolute; left: 6px; width: 52px; height: 52px;
-            background: #FDFDFD; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; color: var(--primary-dark);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 2;
-        }
-
-        /* NAVEGACIÓN */
-        nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-light); z-index: 1000; }
-        .nav-item { border: none; background: none; color: #C4C4C4; }
-        .nav-item.active { color: var(--primary-dark); }
-    </style>
-</head>
-<body>
-
-    <div id="withdraw" class="view active">
-        <header><p>Mis productos</p></header>
-        <div class="_infoContainer">
-            <div>
-                <p style="font-size: 14px; font-weight: 700; margin:0;">Seleccioná tus productos.</p>
-                <p style="font-size: 12px; font-weight: 500; color: var(--gray-text); margin:0;">Retiralos por el mostrador.</p>
-            </div>
-            <button class="todos-btn" onclick="selectAll()">Todos</button>
-        </div>
-        <ul id="productList">
-            <li class="product-item" onclick="toggleSelect(this)">
-                <div class="product-image"><img src="https://assets.skipit.com.ar/60/cropped_1768234915043.webp"></div>
-                <div class="product-info"><p class="product-name">Bebida sin alcohol ingreso</p></div>
-                <div class="radio-custom"></div>
-            </li>
-        </ul>
-        <div class="action-bar" id="actionBar" style="display: flex;">
-            <p style="font-size: 18px; font-weight: 700; margin:0;"><span id="count">0</span> Producto</p>
-            <button id="confirmBtn" class="confirm-btn" onclick="openConfirmRetiro()">Confirmar Retiro</button>
-        </div>
-    </div>
-
-    <div id="retiroConfirmView">
-        <header style="display: flex; align-items: center; justify-content: space-between;">
-            <p style="margin:0;">Retiro</p>
-            <span onclick="closeConfirm()" style="font-size: 24px; cursor: pointer; font-weight: 800;">✕</span>
-        </header>
-        
-        <div class="badge-no-swipe">¡NO hagas swipe antes de retirar!</div>
-        
-        <div class="retiro-container">
-            <div class="store-header">
-                <img src="https://assets.skipit.com.ar/60/logo_60_1742138900273">
-                <div>
-                    <p style="font-size: 18px; font-weight: 700; margin:0;">Rabieta Palermo</p>
-                    <p style="font-size: 12px; font-weight: 500; margin:0;">Ingreso - .</p>
-                </div>
-            </div>
-            
-            <p style="font-size: 16px; font-weight: 800; color: rgb(66, 80, 82); margin-top: 20px;">Hora <span id="currentTime">--:--:--</span></p>
-            
-            <div class="separator"></div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <p style="font-size: 18px; font-weight: 700; margin:0;">Estas retirando</p>
-                <p style="font-size: 18px; font-weight: 700; margin:0;">
-                    <span style="font-weight: 500; font-size: 16px;">Total:</span> <span id="finalCount">1</span>
-                </p>
-            </div>
-            
-            <div style="margin-top: 25px; display: flex; gap: 15px; align-items: center;">
-                <p style="font-size: 18px; font-weight: 700; margin:0;" id="finalCountItem">1</p>
-                <p style="font-size: 18px; font-weight: 700; margin:0;">Bebida sin alcohol ingreso</p>
-            </div>
-        </div>
-
-        <div style="position: absolute; bottom: 30px; width: 100%; text-align: center;">
-            <div class="swipe-wrapper" id="swipeWrapper">
-                <div class="swipe-text">Retirado</div>
-                <div class="swipe-handle" id="swipeHandle">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
-            </div>
-            <p style="font-size: 14px; font-weight: 600; padding: 0 40px;">Deslizá para confirmar que retiraste tus productos</p>
-        </div>
-    </div>
-
-    <div id="home" class="view"></div>
-    <div id="perfil" class="view"></div>
-
-    <nav id="mainNav">
-        <button class="nav-item" onclick="switchView('home', this)">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </button>
-        <button class="nav-item active" onclick="switchView('withdraw', this)">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        </button>
-        <button class="nav-item" onclick="switchView('perfil', this)">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </button>
-    </nav>
-
-    <script>
-        function switchView(viewId, btn) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('actionBar').style.display = (viewId === 'withdraw') ? 'flex' : 'none';
-        }
-
-        function toggleSelect(element) {
-            element.classList.toggle('selected');
-            updateState();
-        }
-
-        function selectAll() {
-            const items = document.querySelectorAll('.product-item');
-            const allSel = Array.from(items).every(i => i.classList.contains('selected'));
-            items.forEach(i => allSel ? i.classList.remove('selected') : i.classList.add('selected'));
-            updateState();
-        }
-
-        function updateState() {
-            const num = document.querySelectorAll('.product-item.selected').length;
-            document.getElementById('count').innerText = num;
-            const btn = document.getElementById('confirmBtn');
-            if (num > 0) btn.classList.add('active');
-            else btn.classList.remove('active');
-        }
-
-        function openConfirmRetiro() {
-            const num = document.querySelectorAll('.product-item.selected').length;
-            if (num === 0) return;
-            document.getElementById('finalCount').innerText = num;
-            document.getElementById('finalCountItem').innerText = num;
-            document.getElementById('currentTime').innerText = new Date().toLocaleTimeString('es-AR');
-            document.getElementById('retiroConfirmView').style.display = 'block';
-            document.getElementById('mainNav').style.display = 'none';
-        }
-
-        function closeConfirm() {
-            document.getElementById('retiroConfirmView').style.display = 'none';
-            document.getElementById('mainNav').style.display = 'flex';
-        }
-
-        // Lógica de Swipe táctil
-        const handle = document.getElementById('swipeHandle');
-        const wrapper = document.getElementById('swipeWrapper');
-        let isDragging = false;
-        let startX = 0;
-
-        handle.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            startX = e.touches[0].clientX;
-            handle.style.transition = 'none';
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            let currentX = e.touches[0].clientX;
-            let diff = currentX - startX;
-            let maxMove = wrapper.offsetWidth - handle.offsetWidth - 12;
-            if (diff > 0 && diff <= maxMove) {
-                handle.style.transform = `translateX(${diff}px)`;
-            }
-            if (diff > maxMove) {
-                isDragging = false;
-                alert("Confirmado!");
-                closeConfirm();
-            }
-        });
-
-        document.addEventListener('touchend', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            handle.style.transition = 'transform 0.3s ease';
-            handle.style.transform = 'translateX(0px)';
-        });
-    </script>
-</body>
-</html>
+    /* El círculo que arrastras (en tu código es azul oscuro) */
+    .swipe-handle {
+        background-color: rgb(4, 37, 43); 
+        color: white;
+        width: 63px;
+        height: 63px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 3px;
+    }
+</style>
