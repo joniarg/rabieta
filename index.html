@@ -8,12 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --success-green: rgb(59, 213, 139); /* [cite: 76] */
-            --swipe-red: rgb(255, 79, 94);     /* [cite: 96] */
-            --primary-dark: rgb(4, 37, 43);    /* [cite: 18, 104] */
-            --track-green: rgb(203, 250, 221); /* [cite: 99] */
-            --progress-green: rgb(81, 206, 44);/* [cite: 90, 100] */
-            --text-black: rgb(10, 17, 18);     /* [cite: 5, 9, 13] */
+            /* Colores extraídos exactamente del código fuente de Skipit */
+            --success-green: rgb(59, 213, 139); 
+            --swipe-red: rgb(255, 79, 94);     
+            --primary-dark: rgb(4, 37, 43);    
+            --track-green: rgb(203, 250, 221); 
+            --progress-green: rgb(81, 206, 44);
+            --text-black: rgb(10, 17, 18);     
+            --btn-gray: rgb(212, 212, 212);    
         }
 
         body {
@@ -43,15 +45,25 @@
         .product-info { flex-grow: 1; }
         .product-name { font-weight: 800; font-size: 16px; }
 
+        /* BARRA ACCIÓN CORREGIDA */
         .action-bar {
             position: fixed; bottom: 70px; left: 0; width: 100%; background: rgb(247, 247, 247);
             padding: 16px 16px 65px; box-sizing: border-box; display: flex;
             justify-content: space-between; align-items: center; border-top: 1px solid #EBEBEB; z-index: 10;
         }
-        .confirm-btn { flex-grow: 1; margin-left: 10px; background-color: rgb(212, 212, 212); color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 500; font-size: 18px; }
-        .confirm-btn.active { background-color: var(--progress-green); color: var(--text-black); cursor: pointer; }
+        .confirm-btn { 
+            flex-grow: 1; margin-left: 10px; 
+            background-color: var(--btn-gray); /* Gris por defecto */
+            color: var(--text-black); /* Letras negras siempre */
+            border: none; padding: 10px 20px; border-radius: 25px; 
+            font-weight: 500; font-size: 18px; transition: background-color 0.3s;
+        }
+        .confirm-btn.active { 
+            background-color: var(--success-green); /* Verde corregido */
+            cursor: pointer; 
+        }
 
-        /* --- PANTALLA RETIRO (FONDO VERDE) --- */
+        /* --- PANTALLA RETIRO --- */
         #retiroConfirmView {
             position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;
             background-color: var(--success-green); z-index: 2000; display: none; overflow-y: auto;
@@ -68,10 +80,7 @@
             margin: 10px 18px; box-shadow: rgba(163, 172, 173, 0.3) 0px 4px 15px;
         }
 
-        /* Estilos de la lista de items en el retiro [cite: 83, 84, 95] */
-        ._itemsList { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
-        ._itemContainer { border-bottom: 1px solid rgb(214, 218, 219); padding-bottom: 10px; }
-        ._itemRow { display: flex; gap: 1rem; align-items: center; padding: 10px 26px; }
+        ._itemRow { display: flex; gap: 1rem; align-items: center; padding: 10px 26px; border-bottom: 1px solid rgb(214, 218, 219); }
 
         .swipe-track {
             position: relative; background-color: var(--track-green); height: 70px;
@@ -129,43 +138,28 @@
         <div class="retiro-card">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
                 <img src="https://assets.skipit.com.ar/60/logo_60_1742138900273" width="50" height="50">
-                <div>
-                    <p style="font-weight: 700; margin: 0;">Rabieta Palermo</p>
-                    <p style="font-size: 12px; margin: 0;">Ingreso - .</p>
-                </div>
+                <div><p style="font-weight: 700; margin: 0;">Rabieta Palermo</p></div>
             </div>
             <p style="font-size: 16px; font-weight: 800; color: rgb(66, 80, 82);">Hora <span id="time">00:00:00</span></p>
-            <div style="background-color: rgb(224, 224, 224); height: 1px; width: 100%; margin: 8px 0;"></div>
-            
-            <div style="display: flex; justify-content: space-between; padding: 10px 8px;">
-                <p style="font-size: 18px; font-weight: 700; margin:0;">Estas retirando</p>
-                <p style="font-size: 18px; font-weight: 700; margin:0;"><span style="font-weight: 500; font-size: 16px;">Total:</span> <span id="finalCount">0</span></p>
-            </div>
-
-            <div id="dynamicItems" class="_itemsList"></div>
+            <div id="dynamicItems"></div>
         </div>
 
         <div class="swipe-track" id="track">
             <div class="swipe-progress" id="progress"></div>
             <span style="position: absolute; font-weight: 700;">Retirado</span>
-            <div class="swipe-thumb" id="handle">
-                <svg width="35" height="35" viewBox="0 0 25 25" fill="white"><path d="M7.83114 19.7627C8.25416 20.2524 8.9744 20.3332 9.49325 19.9697L9.59481 19.8916L17.0401 13.4609C17.3151 13.2235 17.4727 12.8779 17.4727 12.5146C17.4727 12.1515 17.3149 11.8067 17.0401 11.5693L9.59481 5.13867L9.49325 5.05957C8.97439 4.69625 8.25409 4.77784 7.83114 5.26758C7.38019 5.78995 7.43793 6.57906 7.96005 7.03027L14.3106 12.5156L7.96005 17.999L7.86825 18.0879C7.43298 18.5483 7.40809 19.2728 7.83114 19.7627Z" fill="currentColor"></path></svg>
-            </div>
+            <div class="swipe-thumb" id="handle">➜</div>
         </div>
     </div>
 
     <nav id="mainNav">
-        <button class="nav-item">🏠</button>
-        <button class="nav-item">🛒</button>
-        <button class="nav-item active">💼</button>
-        <button class="nav-item">👤</button>
+        <button class="nav-item">🏠</button><button class="nav-item">🛒</button>
+        <button class="nav-item active">💼</button><button class="nav-item">👤</button>
     </nav>
 
     <script>
         function toggleSelect(el) {
             el.classList.toggle('selected');
-            const check = el.querySelector('input');
-            check.checked = el.classList.contains('selected');
+            el.querySelector('input').checked = el.classList.contains('selected');
             update();
         }
 
@@ -191,25 +185,12 @@
         function openConfirm() {
             const selectedItems = document.querySelectorAll('.product-item.selected');
             if(selectedItems.length === 0) return;
-
-            // Limpiar lista anterior
             const container = document.getElementById('dynamicItems');
             container.innerHTML = '';
-
-            // Construir lista de productos elegidos 
             selectedItems.forEach(item => {
                 const name = item.querySelector('.product-name').innerText;
-                const itemHtml = `
-                    <div class="_itemContainer">
-                        <div class="_itemRow">
-                            <p style="font-size: 18px; font-weight: 700; margin:0;">1</p>
-                            <p style="font-size: 18px; font-weight: 700; margin:0;">${name}</p>
-                        </div>
-                    </div>`;
-                container.innerHTML += itemHtml;
+                container.innerHTML += `<div class="_itemRow"><p style="font-weight:700;">1</p><p style="font-weight:700;">${name}</p></div>`;
             });
-
-            document.getElementById('finalCount').innerText = selectedItems.length;
             document.getElementById('time').innerText = new Date().toLocaleTimeString('es-AR');
             document.getElementById('retiroConfirmView').style.display = 'block';
             document.getElementById('mainNav').style.display = 'none';
@@ -220,42 +201,39 @@
             document.getElementById('mainNav').style.display = 'flex';
         }
         
-        // Lógica de Swipe
+        // --- LÓGICA DE SWIPE Y ELIMINACIÓN ---
         const handle = document.getElementById('handle');
         const track = document.getElementById('track');
         let isDragging = false;
         let startX = 0;
 
-        handle.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            startX = e.touches[0].clientX;
-            handle.style.transition = 'none';
-        });
-
+        handle.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].clientX; handle.style.transition = 'none'; });
         document.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            let currentX = e.touches[0].clientX;
-            let diff = currentX - startX;
+            let diff = e.touches[0].clientX - startX;
             let maxMove = track.offsetWidth - handle.offsetWidth - 10;
-            
             if (diff > 0 && diff <= maxMove) {
                 handle.style.transform = `translateX(${diff}px)`;
                 document.getElementById('progress').style.width = (diff + 30) + 'px';
             }
             if (diff > maxMove) {
                 isDragging = false;
-                alert("¡Retiro confirmado!");
-                location.reload();
+                confirmFinish(); // Lógica para borrar los productos
             }
         });
 
-        document.addEventListener('touchend', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            handle.style.transition = 'transform 0.3s';
-            handle.style.transform = 'translateX(0px)';
-            document.getElementById('progress').style.width = '0';
-        });
+        document.addEventListener('touchend', () => { if (!isDragging) return; isDragging = false; handle.style.transition = 'transform 0.3s'; handle.style.transform = 'translateX(0px)'; document.getElementById('progress').style.width = '0'; });
+
+        function confirmFinish() {
+            // 1. Encontrar y eliminar los elementos seleccionados de la lista principal
+            const selectedItems = document.querySelectorAll('.product-item.selected');
+            selectedItems.forEach(item => item.remove()); // Borra del diseño 
+            
+            // 2. Resetear contadores y cerrar pantallas
+            update();
+            alert("¡Productos retirados con éxito!");
+            closeConfirm();
+        }
     </script>
 </body>
 </html>
