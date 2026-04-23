@@ -10,26 +10,30 @@
         :root {
             --success-green: rgb(59, 213, 139); 
             --swipe-red: rgb(255, 79, 94);     
-            --primary-dark: rgb(4, 37, 43);    /* El color negro/azul oscuro */
+            --primary-dark: rgb(4, 37, 43);    
             --track-green: rgb(203, 250, 221); 
+            --progress-green: rgb(81, 206, 44);
             --text-black: rgb(10, 17, 18);     
-            --btn-gray: rgb(212, 212, 212);
+            --gray-text: rgb(66, 80, 82);      
+            --bg-light: rgb(250, 250, 250);    
+            --border-light: rgb(224, 224, 224);
         }
 
         body {
             margin: 0; padding: 0;
             font-family: 'Manrope', sans-serif;
-            background-color: rgb(250, 250, 250);
+            background-color: var(--bg-light);
             color: var(--text-black);
             overflow-x: hidden;
+            height: 100vh;
         }
 
         .view { display: none; min-height: 100vh; padding-bottom: 90px; }
         .view.active { display: block; }
 
-        /* --- HOME --- */
+        /* --- PANTALLA HOME --- */
         .banner-img { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
-        .sticky-block { background: white; padding: 15px 20px; border-bottom: 1px solid rgb(224, 224, 224); }
+        .sticky-block { background: white; padding: 15px 20px; border-bottom: 1px solid var(--border-light); }
         .store-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
         .store-logo { width: 50px; height: 50px; border-radius: 8px; }
         .balance-card { background-color: var(--primary-dark); color: white; padding: 15px 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
@@ -40,15 +44,15 @@
         .home-product-img { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; }
         .add-btn-circle { position: absolute; bottom: 65px; right: 15px; background: var(--primary-dark); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: none; }
 
-        /* --- MIS PRODUCTOS (WITHDRAW) --- */
+        /* --- PANTALLA MIS PRODUCTOS (WITHDRAW) --- */
         header { padding: 30px 20px 10px 20px; font-size: 26px; font-weight: 700; }
-        ._infoContainer { padding: 0 20px 15px 20px; display: flex; justify-content: space-between; }
-        .todos-btn { background: white; border: 1px solid rgb(214, 218, 219); border-radius: 20px; padding: 8px 20px; font-weight: 500; cursor: pointer; }
+        ._infoContainer { padding: 0 20px 15px 20px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .todos-btn { background: white; border: 1px solid var(--border-light); border-radius: 16px; padding: 6px 18px; font-weight: 500; font-size: 14px; cursor: pointer; }
         
         ul { list-style: none; padding: 0 15px; margin: 0; }
         .product-item {
             display: flex; align-items: center; padding: 1rem; margin-bottom: 11px;
-            border: 1px solid rgb(214, 218, 219); border-radius: 20px; background: white; cursor: pointer;
+            border: 1px solid var(--border-light); border-radius: 20px; background: white; cursor: pointer;
         }
         .product-item.selected { border: 1px solid var(--text-black); }
         .product-image img { width: 44px; height: 44px; border-radius: 16px; margin-right: 15px; object-fit: cover; }
@@ -60,62 +64,19 @@
             padding: 16px 16px 65px; box-sizing: border-box; display: flex;
             justify-content: space-between; align-items: center; border-top: 1px solid #EBEBEB; z-index: 10;
         }
-        .confirm-btn { flex-grow: 1; margin-left: 10px; background-color: var(--btn-gray); color: var(--text-black); border: none; padding: 10px 20px; border-radius: 25px; font-weight: 500; font-size: 18px; transition: 0.3s; text-align: center; }
+        .confirm-btn { flex-grow: 1; margin-left: 10px; background-color: rgb(212, 212, 212); color: var(--text-black); border: none; padding: 10px 20px; border-radius: 25px; font-weight: 500; font-size: 18px; transition: 0.3s; text-align: center; }
         .confirm-btn.active { background-color: var(--success-green); cursor: pointer; }
 
         /* --- PANTALLAS RETIRO --- */
         #retiroConfirmView, #retiroSuccessView { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background-color: var(--success-green); z-index: 2000; display: none; overflow-y: auto; }
         .badge-no-swipe { background-color: var(--swipe-red); color: white; padding: 28px 16px; margin: 0 18px; text-align: center; font-weight: 700; font-size: 18px; border-radius: 20px; border: 1px solid rgb(251, 183, 181); }
         .retiro-card { background: white; border-radius: 32px; padding: 18px; margin: 10px 18px; box-shadow: rgba(163, 172, 173, 0.3) 0px 4px 15px; }
-        ._itemRow { display: flex; gap: 1rem; align-items: center; padding: 10px 26px; border-bottom: 1px solid rgb(224, 224, 224); }
+        ._itemRow { display: flex; gap: 1rem; align-items: center; padding: 10px 26px; border-bottom: 1px solid var(--border-light); }
+        
+        .swipe-track { position: relative; background-color: var(--track-green); height: 70px; border-radius: 50px; margin: 40px 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .swipe-progress { position: absolute; left: 0; height: 100%; background: var(--primary-dark); width: 0; border-radius: 50px; }
+        .swipe-thumb { position: absolute; left: 3px; width: 63px; height: 63px; background-color: rgb(253, 253, 253); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-dark); z-index: 10; cursor: grab; }
 
-        /* CARRIL DEL SWIPE */
-        .swipe-track {
-            position: relative; 
-            background-color: var(--track-green); 
-            height: 70px; 
-            border-radius: 50px; 
-            margin: 40px 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden;
-        }
-
-        /* ESTELA / BARRA DE PROGRESO (CORREGIDA A NEGRO/AZUL) */
-        .swipe-progress { 
-            position: absolute; 
-            left: 0; 
-            height: 100%; 
-            background-color: var(--primary-dark); /* Color negro/azul oscuro */
-            width: 0; 
-            border-radius: 50px; 
-            z-index: 1;
-        }
-
-        .swipe-text {
-            position: absolute; 
-            font-weight: 700; 
-            color: var(--text-black); 
-            z-index: 2;
-        }
-
-        .swipe-thumb { 
-            position: absolute; 
-            left: 3px; 
-            width: 63px; 
-            height: 63px; 
-            background-color: rgb(253, 253, 253); 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--primary-dark); 
-            z-index: 10; 
-            cursor: grab; 
-        }
-
-        /* --- ÉXITO --- */
         .success-container { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; }
 
         /* --- NAVEGACIÓN --- */
@@ -146,7 +107,7 @@
                 <span style="font-weight: 700; font-size: 18px;">Mi Saldo</span>
                 <span style="font-weight: 700; font-size: 18px;">$ 0,00</span>
             </div>
-            <div class="categories-scroll"><div class="category-tab">Ingreso</div><div class="category-tab" style="background:transparent; color:rgb(66, 80, 82);">Bebidas</div></div>
+            <div class="categories-scroll"><div class="category-tab">Ingreso</div><div class="category-tab" style="background:transparent; color:var(--gray-text);">Bebidas</div></div>
         </div>
         <div class="product-grid">
             <div class="home-product-card">
@@ -175,7 +136,7 @@
         </div>
         <ul id="mainProductList">
             <li class="product-item" onclick="toggleSelect(this)">
-                <div class="product-image"><img src="https://assets.skipit.com.ar/60/cropped_1768234915043.webp"></div>
+                <div class="product-image"><img src="https://assets.skipit.com.ar/60/logo_60_1742138900273"></div>
                 <div class="product-info"><p class="product-name">Ingreso</p></div>
                 <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primary-dark);">
             </li>
@@ -201,11 +162,9 @@
         </div>
         <div class="swipe-track" id="track">
             <div class="swipe-progress" id="progress"></div>
-            <span class="swipe-text">Retirado</span>
+            <span style="position: absolute; font-weight: 700; color: var(--text-black); z-index: 2;">Retirado</span>
             <div class="swipe-thumb" id="handle">
-                <svg width="35" height="35" viewBox="0 0 25 25" fill="currentColor">
-                    <path d="M7.83114 19.7627C8.25416 20.2524 8.9744 20.3332 9.49325 19.9697L9.59481 19.8916L17.0401 13.4609C17.3151 13.2235 17.4727 12.8779 17.4727 12.5146C17.4727 12.1515 17.3149 11.8067 17.0401 11.5693L9.59481 5.13867L9.49325 5.05957C8.97439 4.69625 8.25409 4.77784 7.83114 5.26758C7.38019 5.78995 7.43793 6.57906 7.96005 7.03027L14.3106 12.5156L7.96005 17.999L7.86825 18.0879C7.43298 18.5483 7.40809 19.2728 7.83114 19.7627Z"></path>
-                </svg>
+                <svg width="35" height="35" viewBox="0 0 25 25" fill="currentColor"><path d="M7.83114 19.7627C8.25416 20.2524 8.9744 20.3332 9.49325 19.9697L9.59481 19.8916L17.0401 13.4609C17.3151 13.2235 17.4727 12.8779 17.4727 12.5146C17.4727 12.1515 17.3149 11.8067 17.0401 11.5693L9.59481 5.13867L9.49325 5.05957C8.97439 4.69625 8.25409 4.77784 7.83114 5.26758C7.38019 5.78995 7.43793 6.57906 7.96005 7.03027L14.3106 12.5156L7.96005 17.999L7.86825 18.0879C7.43298 18.5483 7.40809 19.2728 7.83114 19.7627Z"/></svg>
             </div>
         </div>
     </div>
@@ -220,16 +179,16 @@
 
     <nav id="mainNav">
         <button class="nav-item active" onclick="switchView('home', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21V16a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"/><path d="M3 10l9-7 9 7v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21V16a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"/><path d="M3 10l9-7 9 7v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
         </button>
         <button class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         </button>
         <button class="nav-item" onclick="switchView('withdraw', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </button>
         <button class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
     </nav>
 
@@ -264,10 +223,7 @@
             if (!isD) return;
             let diff = e.touches[0].clientX - sX;
             let max = t.offsetWidth - h.offsetWidth - 6;
-            if (diff > 0 && diff <= max) { 
-                h.style.transform = `translateX(${diff}px)`; 
-                p.style.width = (diff + 31) + 'px'; // Estela negra
-            }
+            if (diff > 0 && diff <= max) { h.style.transform = `translateX(${diff}px)`; p.style.width = (diff + 31) + 'px'; }
             if (diff > max) { isD = false; confirmFinish(); }
         });
         document.addEventListener('touchend', () => { if (!isD) return; isD = false; h.style.transition = 'transform 0.3s'; h.style.transform = 'translateX(0px)'; p.style.width = '0'; });
